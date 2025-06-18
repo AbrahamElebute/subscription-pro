@@ -1,3 +1,5 @@
+import cleanMessage from "../utils/helpers/cleanMessage.js";
+
 const errorMiddleware = (err, req, res, next) => {
   console.error(" Error:", err);
 
@@ -19,13 +21,17 @@ const errorMiddleware = (err, req, res, next) => {
 
     // Format each field's error message(s) into an array
     for (const key in err.errors) {
-      errors[key] = [err.errors[key].message];
+      const rawMessage = err.errors[key].message;
+      errors[key] = [cleanMessage(rawMessage)];
     }
   }
 
   // If  error has a structured errors object (e.g., from createHttpError)
   if (err.errors && typeof err.errors === "object" && !errors) {
-    errors = err.errors;
+    errors = {};
+    for (const key in err.errors) {
+      errors[key] = err.errors[key].map((msg) => cleanMessage(msg));
+    }
   }
 
   try {

@@ -1,5 +1,5 @@
 import aj from "../config/arcjet.js";
-import createHttpError from "../utils/createHttpError.js";
+import createHttpError from "../utils/helpers/createHttpError.js";
 
 const arcjetMiddleware = async (req, res, next) => {
   try {

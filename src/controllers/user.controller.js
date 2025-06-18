@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
-import sendResponse from "../utils/sendResponse.js";
-import createHttpError from "../utils/createHttpError.js";
+import sendResponse from "../utils/helpers/sendResponse.js";
+import createHttpError from "../utils/helpers/createHttpError.js";
 
 const getUsers = async (req, res, next) => {
   try {

@@ -1,5 +1,7 @@
 import { Router } from "express";
 import authorize from "../middlewares/auth.middleware.js";
+import validate from "../middlewares/validate.middleware.js";
+import { createSubscriptionSchema } from "../validations/subscription.validation.js";
 import {
   createSubscription,
   getUserSubscriptions,
@@ -15,7 +17,12 @@ subscriptionRouter.get("/:id", (req, res) =>
   res.send({ title: "GET subscription details" })
 );
 
-subscriptionRouter.post("/", authorize, createSubscription);
+subscriptionRouter.post(
+  "/",
+  authorize,
+  validate(createSubscriptionSchema),
+  createSubscription
+);
 
 subscriptionRouter.put("/:id", (req, res) =>
   res.send({ title: "UPDATE subscription" })

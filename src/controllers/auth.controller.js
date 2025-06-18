@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
 import jwt from "jsonwebtoken";
-import sendResponse from "../utils/sendResponse.js";
+import sendResponse from "../utils/helpers/sendResponse.js";
 
 export const signUp = async (req, res, next) => {
   const session = await mongoose.startSession();
