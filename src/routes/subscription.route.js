@@ -5,41 +5,31 @@ import { createSubscriptionSchema } from "../validations/subscription.validation
 import {
   createSubscription,
   getUserSubscriptions,
+  getAllSubscriptions,
+  getSubscriptionById,
+  updateSubscription,
+  deleteSubscription,
+  cancelSubscription,
+  upcomingRenewals,
 } from "../controllers/subscription.controller.js";
 
 const subscriptionRouter = Router();
 
-subscriptionRouter.get("/", (req, res) =>
-  res.send({ title: "GET all subscriptions" })
-);
+subscriptionRouter
+  .route("/")
+  .get(getAllSubscriptions)
+  .post(authorize, validate(createSubscriptionSchema), createSubscription);
 
-subscriptionRouter.get("/:id", (req, res) =>
-  res.send({ title: "GET subscription details" })
-);
-
-subscriptionRouter.post(
-  "/",
-  authorize,
-  validate(createSubscriptionSchema),
-  createSubscription
-);
-
-subscriptionRouter.put("/:id", (req, res) =>
-  res.send({ title: "UPDATE subscription" })
-);
-
-subscriptionRouter.delete("/:id", (req, res) =>
-  res.send({ title: "DELETE subscription" })
-);
+subscriptionRouter
+  .route("/:id")
+  .get(getSubscriptionById)
+  .put(updateSubscription)
+  .delete(deleteSubscription);
 
 subscriptionRouter.get("/user/:id", authorize, getUserSubscriptions);
 
-subscriptionRouter.put("/:id/cancel", (req, res) =>
-  res.send({ title: "CANCEL subscription" })
-);
+subscriptionRouter.put("/:id/cancel", cancelSubscription);
 
-subscriptionRouter.get("/upcoming-renewals", (req, res) =>
-  res.send({ title: "GET upcoming renewals" })
-);
+subscriptionRouter.get("/upcoming-renewals", upcomingRenewals);
 
 export default subscriptionRouter;

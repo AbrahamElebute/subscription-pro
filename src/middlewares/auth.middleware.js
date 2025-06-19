@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/env.js";
 import User from "../models/user.model.js";
+import createHttpError from "../utils/helpers/createHttpError.js";
 
 const authorize = async (req, res, next) => {
   let token;
@@ -13,9 +14,7 @@ const authorize = async (req, res, next) => {
   }
 
   if (!token) {
-    const error = new Error("Unauthorized access");
-    error.statusCode = 401;
-    return next(error);
+    return next(createHttpError("Unauthorized access", 401));
   }
 
   try {
@@ -23,9 +22,7 @@ const authorize = async (req, res, next) => {
     const user = await User.findById(decoded.userId).select("-password");
 
     if (!user) {
-      const error = new Error("Unauthorized access");
-      error.statusCode = 401;
-      return next(error);
+      return next(createHttpError("Unauthorized access", 401));
     }
 
     req.user = user;
