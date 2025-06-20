@@ -18,6 +18,7 @@ export const createSubscription = async (req, res, next) => {
         body: {
           subscriptionId: subscription._id.toString(),
         },
+        method: "POST",
         headers: {
           "content-type": "application/json",
           "Upstash-Delay": "10s",
