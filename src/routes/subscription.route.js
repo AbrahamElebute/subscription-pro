@@ -1,7 +1,12 @@
 import { Router } from "express";
 import authorize from "../middlewares/auth.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
-import { createSubscriptionSchema } from "../validations/subscription.validation.js";
+import {
+  subscriptionIdParamSchema,
+  createSubscriptionSchema,
+  userIdParamSchema,
+  updateSubscriptionSchema,
+} from "../validations/subscription.validation.js";
 import {
   createSubscription,
   getUserSubscriptions,
@@ -15,21 +20,49 @@ import {
 
 const subscriptionRouter = Router();
 
+// Upcoming Renewals — no param validation needed
+subscriptionRouter.get("/upcoming-renewals", authorize, upcomingRenewals);
+
+// Create and Get All Subscriptions
 subscriptionRouter
   .route("/")
   .get(getAllSubscriptions)
   .post(authorize, validate(createSubscriptionSchema), createSubscription);
 
+// Subscription by ID
 subscriptionRouter
   .route("/:id")
-  .get(getSubscriptionById)
-  .put(updateSubscription)
-  .delete(deleteSubscription);
+  .get(
+    authorize,
+    validate(subscriptionIdParamSchema, "params"),
+    getSubscriptionById
+  )
+  .put(
+    authorize,
+    validate(subscriptionIdParamSchema, "params"),
+    validate(updateSubscriptionSchema),
+    updateSubscription
+  )
+  .delete(
+    authorize,
+    validate(subscriptionIdParamSchema, "params"),
+    deleteSubscription
+  );
 
-subscriptionRouter.get("/user/:id", authorize, getUserSubscriptions);
+// Get User Subscriptions
+subscriptionRouter.get(
+  "/user/:id",
+  authorize,
+  validate(userIdParamSchema, "params"),
+  getUserSubscriptions
+);
 
-subscriptionRouter.put("/:id/cancel", cancelSubscription);
-
-subscriptionRouter.get("/upcoming-renewals", upcomingRenewals);
+// Cancel Subscription
+subscriptionRouter.put(
+  "/:id/cancel",
+  authorize,
+  validate(subscriptionIdParamSchema, "params"),
+  cancelSubscription
+);
 
 export default subscriptionRouter;

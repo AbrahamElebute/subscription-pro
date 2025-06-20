@@ -49,26 +49,121 @@ export const getUserSubscriptions = async (req, res, next) => {
   }
 };
 
-export const getAllSubscriptions = async (res) => {
-  res.send({ title: "GET all subscriptions" });
+export const getAllSubscriptions = async (req, res, next) => {
+  try {
+    const subscriptions = await Subscription.find().populate(
+      "user",
+      "name email"
+    );
+    return sendResponse(res, {
+      statusCode: 200,
+      data: subscriptions,
+      message: "All subscriptions retrieved successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
-export const getSubscriptionById = async (res) => {
-  res.send({ title: "GET subscription details" });
+export const getSubscriptionById = async (req, res, next) => {
+  try {
+    const subscription = await Subscription.findById(req.params.id).populate(
+      "user",
+      "name email"
+    );
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    return sendResponse(res, {
+      statusCode: 200,
+      message: "Subscription retrieved successfully",
+      data: subscription,
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
-export const updateSubscription = async (res) => {
-  res.send({ title: "UPDATE subscription" });
+export const updateSubscription = async (req, res, next) => {
+  try {
+    const subscription = await Subscription.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, updated: true, updatedAt: new Date() },
+      { new: true }
+    );
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    return sendResponse(res, {
+      statusCode: 200,
+      message: "Subscription updated successfully",
+      data: subscription,
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
-export const deleteSubscription = async (res) => {
-  res.send({ title: "DELETE subscription" });
+export const deleteSubscription = async (req, res, next) => {
+  try {
+    const subscription = await Subscription.findByIdAndDelete(req.params.id);
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    return sendResponse(res, {
+      statusCode: 200,
+      message: "Subscription deleted successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
-export const cancelSubscription = async (res) => {
-  res.send({ title: "CANCEL subscription" });
+export const cancelSubscription = async (req, res, next) => {
+  try {
+    const subscription = await Subscription.findByIdAndUpdate(
+      req.params.id,
+      { status: "cancelled" },
+      { new: true }
+    );
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    return sendResponse(res, {
+      statusCode: 200,
+      message: "Subscription cancelled successfully",
+      data: subscription,
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 
-export const upcomingRenewals = async (res) => {
-  res.send({ title: "GET upcoming renewals" });
+export const upcomingRenewals = async (req, res, next) => {
+  try {
+    const today = new Date();
+    const upcomingDate = new Date();
+    upcomingDate.setDate(today.getDate() + 7);
+
+    const renewals = await Subscription.find({
+      user: req.user._id,
+      renewalDate: { $gte: today, $lte: upcomingDate },
+      status: "active",
+    }).populate("user", "name email");
+
+    return sendResponse(res, {
+      statusCode: 200,
+      data: renewals,
+      message: "Upcoming renewals retrieved successfully",
+    });
+  } catch (e) {
+    next(e);
+  }
 };

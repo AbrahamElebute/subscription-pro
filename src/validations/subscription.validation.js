@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const createSubscriptionSchema = Joi.object({
+const createSubscriptionSchema = Joi.object({
   name: Joi.string().min(2).max(100).required().messages({
     "string.empty": "Subscription name is required",
     "string.min": "Name must be at least 2 characters",
@@ -58,3 +58,52 @@ export const createSubscriptionSchema = Joi.object({
     "date.greater": "Renewal date must be after the start date",
   }),
 });
+
+const userIdParamSchema = Joi.object({
+  id: Joi.string().length(24).hex().required().messages({
+    "any.required": "User ID is required",
+    "string.length": "User ID must be a valid 24-character hex string",
+  }),
+});
+
+const subscriptionIdParamSchema = Joi.object({
+  id: Joi.string().length(24).hex().required(),
+});
+
+const updateSubscriptionSchema = Joi.object({
+  name: Joi.string().min(2).max(100).optional(),
+
+  price: Joi.number().min(0).optional(),
+
+  currency: Joi.string().valid("USD", "EUR", "GBP").optional(),
+
+  frequency: Joi.string()
+    .valid("daily", "weekly", "monthly", "yearly")
+    .optional(),
+
+  category: Joi.string()
+    .valid(
+      "sports",
+      "news",
+      "entertainment",
+      "lifestyle",
+      "technology",
+      "finance",
+      "politics",
+      "other"
+    )
+    .optional(),
+
+  paymentMethod: Joi.string().trim().optional(),
+
+  startDate: Joi.date().less("now").optional(),
+
+  renewalDate: Joi.date().greater(Joi.ref("startDate")).optional(),
+});
+
+export {
+  createSubscriptionSchema,
+  userIdParamSchema,
+  subscriptionIdParamSchema,
+  updateSubscriptionSchema,
+};

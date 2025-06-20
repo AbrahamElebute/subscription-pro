@@ -70,6 +70,7 @@ const subscriptionSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    updated: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

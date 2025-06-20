@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: subscription-pro
+    environment:
+      - NODE_ENV=production
+      - PORT=5500
+      - SERVER_URL=
+      - DB_URI=mongodb+srv://elebuteimisioluwa:7f0ZZi8QhfKwVRkC@cluster0.v01obgb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - JWT_SECRET=dbjwkdjkdkh9834huerdjkcew-f9089uiyvhj
+      - JWT_EXPIRES_IN=1d
+      - ARCJET_ENV=production
+      - ARCJET_KEY=ajkey_01jwkezy1mexqsjj4fvaznhmw1
+      - QSTASH_URL=https://qstash.upstash.io
+      - QSTASH_TOKEN=eyJVc2VySUQiOiI4ZDdmYmM5ZC1mZTgzLTQxMDktODZlMS1lYTU0ZjFmYjkzN2EiLCJQYXNzd29yZCI6IjFhY2RjZWZmYjgyNzRiMjE4Y2UwYzAwM2U4OTRlNjNlIn0=
+      - QSTASH_CURRENT_SIGNING_KEY=sig_4hrQCgYZ7YboWUpBs4mNLLadRFYS
+      - QSTASH_NEXT_SIGNING_KEY=sig_5KonVumedRz6Nmh1chKnkzLLf43s
+    ports:
+      - "5500:5500"
+    restart: unless-stopped
+    volumes:
+      - .:/app
