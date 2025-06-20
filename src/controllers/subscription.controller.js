@@ -10,16 +10,26 @@ export const createSubscription = async (req, res, next) => {
       user: req.user._id,
     });
 
-    const { workflowRunId } = await workflowClient.trigger({
-      url: `${SERVER_URL}/api/v1/workflows/subscription/reminder`,
-      body: {
-        subscriptionId: subscription.id,
-      },
-      headers: {
-        "content-type": "application/json",
-      },
-      retries: 0,
-    });
+    let workflowRunId = null;
+
+    try {
+      const { workflowRunId: runId } = await workflowClient.trigger({
+        url: `${SERVER_URL}/api/v1/workflows/subscription/reminder`,
+        body: {
+          subscriptionId: subscription._id.toString(),
+        },
+        headers: {
+          "content-type": "application/json",
+          "Upstash-Delay": "10s",
+        },
+        retries: 0,
+      });
+
+      workflowRunId = runId;
+      console.log("✅ Reminder workflow triggered:", workflowRunId);
+    } catch (workflowErr) {
+      console.error("❌ Failed to trigger reminder workflow:", workflowErr);
+    }
 
     return sendResponse(res, {
       statusCode: 201,
