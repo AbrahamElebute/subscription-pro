@@ -8,6 +8,7 @@ import { sendReminderEmail } from "../utils/email/send-email.js";
 const REMINDERS = [7, 5, 2, 1];
 
 export const sendReminders = serve(async (context) => {
+  console.log("▶️ Reminder workflow started");
   const { subscriptionId } = context.requestPayload;
   const subscription = await fetchSubscription(context, subscriptionId);
 
@@ -37,18 +38,13 @@ export const sendReminders = serve(async (context) => {
       );
     }
 
-    // if (dayjs().isSame(reminderDate, "day")) {
-    //   await triggerReminder(
-    //     context,
-    //     `${daysBefore} days before reminder`,
-    //     subscription
-    //   );
-    // }
-    await triggerReminder(
-      context,
-      `${daysBefore} days before reminder`,
-      subscription
-    );
+    if (dayjs().isSame(reminderDate, "day")) {
+      await triggerReminder(
+        context,
+        `${daysBefore} days before reminder`,
+        subscription
+      );
+    }
   }
 });
 
