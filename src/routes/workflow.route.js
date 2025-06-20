@@ -6,4 +6,8 @@ const workflowRouter = Router();
 
 workflowRouter.post("/subscription/reminder", sendReminders);
 
+workflowRouter.get("/subscription/reminder", (req, res) => {
+  res.status(200).json({ message: "Reminder workflow is POST only" });
+});
+
 export default workflowRouter;
